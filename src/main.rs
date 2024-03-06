@@ -10,7 +10,6 @@ fn main() {
 #[component]
 fn App() -> impl IntoView {
     let (count, set_count) = create_signal(0);
-
     let double_count = move || count() * 2;
 
     view! {
@@ -25,18 +24,23 @@ fn App() -> impl IntoView {
             {count}
         </button>
         <br/>
-        <progress
-            max="50"
-            // we use it once here
-            value=count
-        ></progress>
+        <ProgressBar progress=count/>
         <br/>
-        <progress
-            max="50"
-            // we use it once here
-            value=double_count
-        ></progress>
+        <ProgressBar progress=Signal::derive(double_count)/>
         <p>"Count: " {count}</p>
         <p>"Double Count: " {double_count}</p>
     }
+}
+
+/// Shows progress
+#[component]
+fn ProgressBar(
+    /// The maximum value of the progress bar
+    #[prop(default = 100)]
+    max: u16,
+    /// The value of the progress bar
+    #[prop(into)]
+    progress: Signal<i32>,
+) -> impl IntoView {
+    view! { <progress max=max value=progress></progress> }
 }
